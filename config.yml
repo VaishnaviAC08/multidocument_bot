@@ -1,18 +1,33 @@
+# The config recipe.
+# https://rasa.com/docs/rasa/model-configuration/
+recipe: default.v1
+
+# Configuration for Rasa NLU.
+# https://rasa.com/docs/rasa/nlu/components/
 language: en
 pipeline:
 - name: WhitespaceTokenizer
-- name: RegexFeaturizer
-- name: LexicalSyntacticFeaturizer
 - name: CountVectorsFeaturizer
 - name: CountVectorsFeaturizer
-  analyzer: char_wb
+  analyzer: "char_wb"
   min_ngram: 1
   max_ngram: 4
 - name: DIETClassifier
+  epochs: 120
+  entity_recognition: false
+- name: ResponseSelector
   epochs: 100
-- name: EntitySynonymMapper
+- name: FallbackClassifier
+  threshold: 0.85
+
 policies:
-- name: MemoizationPolicy
-- name: RulePolicy
 - name: TEDPolicy
-assistant_id: 20230722-094032-metal-pretzel
+  max_history: 10
+  epochs: 20
+- name: AugmentedMemoizationPolicy
+  max_history: 6
+- name: RulePolicy
+  core_fallback_threshold: 0.4
+  core_fallback_action_name: "action_query_database"
+  enable_fallback_prediction: true
+assistant_id: 20230801-133026-sleek-electricity

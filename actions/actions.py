@@ -10,7 +10,9 @@ from langchain.chains.question_answering import load_qa_chain
 from rasa_sdk import Action, Tracker
 from rasa_sdk.executor import CollectingDispatcher
 from typing import Any, Dict, List, Text
-os.environ['OPENAI_API_KEY'] = "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"
+from rasa_sdk.events import UserUtteranceReverted
+
+os.environ['OPENAI_API_KEY'] = "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"
 
 
 
@@ -22,7 +24,7 @@ class ActionQueryDatabase(Action):
             tracker: Tracker,
             domain: Dict[Text, Any]) -> List[Dict[Text, Any]]:
         user_query = tracker.latest_message.get('text')
-        os.environ['OPENAI_API_KEY'] = "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"
+        os.environ['OPENAI_API_KEY'] = "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"
         directory = "content"
         def load_docs(directory):
             loader = DirectoryLoader(directory)
@@ -66,21 +68,4 @@ class ActionQueryDatabase(Action):
         # # Assuming the response from the database query is a single string
         dispatcher.utter_message(text=response)
 
-        return []
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        return [UserUtteranceReverted()]
